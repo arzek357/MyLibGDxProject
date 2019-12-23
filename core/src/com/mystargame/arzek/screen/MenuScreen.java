@@ -31,7 +31,7 @@ public class MenuScreen extends BaseScreen {
         batch.draw(img, 0, 0);
         batch.draw(img2,pos.x,pos.y,100,100);
         batch.end();
-        moveLogoTouch();
+        moveLogo();
     }
     @Override
     public void dispose() {
@@ -45,7 +45,7 @@ public class MenuScreen extends BaseScreen {
         click.set(screenX,Gdx.graphics.getHeight()-screenY);
         return false;
     }
-    private void moveLogoTouch(){
+    private void moveLogo(){
         if (!pos.equals(click)){
             Vector2 move = click.cpy().sub(pos);
             move=move.nor();
@@ -55,6 +55,17 @@ public class MenuScreen extends BaseScreen {
 
     @Override
     public boolean keyTyped(char character) {
+        if (character=='w'||character=='ц'){
+            click.add(0,10);}
+        else if(character=='s'||character=='ы'){
+            click.add(0,-10);
+            }
+        else if(character=='a'||character=='ф'){
+            click.add(-10,0);
+        }
+        else if(character=='d'||character=='в'){
+            click.add(10,0);
+        }
         return false;
     }
 }
