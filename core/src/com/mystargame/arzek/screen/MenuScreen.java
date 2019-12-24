@@ -8,10 +8,8 @@ import com.mystargame.arzek.base.BaseScreen;
 
 public class MenuScreen extends BaseScreen {
 
-    private Texture img;
-    private Texture img2;
-    private Vector2 pos;
-    private Vector2 click;
+    private Texture img,img2;
+    private Vector2 pos,click;
 
     @Override
     public void show() {
@@ -47,7 +45,8 @@ public class MenuScreen extends BaseScreen {
     }
     private void moveLogo(){
         if (!pos.equals(click)){
-            Vector2 move = click.cpy().sub(pos);
+            Vector2 clickCopy = new Vector2(click);
+            Vector2 move = clickCopy.sub(pos);
             move=move.nor();
             pos.add(Math.round(move.x),Math.round(move.y));
         }
