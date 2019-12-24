@@ -48,6 +48,7 @@ public class MenuScreen extends BaseScreen {
             Vector2 clickCopy = new Vector2(click);
             Vector2 move = clickCopy.sub(pos);
             move=move.nor();
+            //comment
             pos.add(Math.round(move.x),Math.round(move.y));
         }
     }
