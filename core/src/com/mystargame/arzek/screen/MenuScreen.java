@@ -7,14 +7,15 @@ import com.badlogic.gdx.math.Vector2;
 import com.mystargame.arzek.base.BaseScreen;
 
 public class MenuScreen extends BaseScreen {
-
+    private static final float OBJECT_SPEED = 5f;
     private Texture img,img2;
-    private Vector2 pos,click;
+    private Vector2 pos,click,lastMove;
 
     @Override
     public void show() {
         super.show();
         pos = new Vector2();
+        lastMove = new Vector2();
         click = new Vector2();
         img = new Texture("galaxy.jpg");
         img2 = new Texture("badlogic.jpg");
@@ -41,14 +42,17 @@ public class MenuScreen extends BaseScreen {
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         click.set(screenX,Gdx.graphics.getHeight()-screenY);
+        System.out.println(screenX+"  "+(Gdx.graphics.getHeight()-screenY));
+        lastMove.set(0,0);
         return false;
     }
     private void moveLogo(){
         if (!pos.equals(click)){
             Vector2 clickCopy = new Vector2(click);
             Vector2 move = clickCopy.sub(pos);
-            move=move.nor();
-            pos.add(Math.round(move.x),Math.round(move.y));
+            move=move.setLength(OBJECT_SPEED);
+            checkPosition(move);
+            lastMove.set(move);
         }
     }
 
@@ -66,5 +70,13 @@ public class MenuScreen extends BaseScreen {
             click.add(10,0);
         }
         return false;
+    }
+    private void checkPosition(Vector2 move){
+        if((lastMove.x/move.x>0||lastMove.y/move.y>0)||(lastMove.x==0&lastMove.y==0)){
+            pos.add(move.x,move.y);
+        }
+        else{
+            pos.set(click);
+        }
     }
 }
