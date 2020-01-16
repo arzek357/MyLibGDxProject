@@ -8,17 +8,16 @@ import com.mystargame.arzek.base.BaseScreen;
 
 public class MenuScreen extends BaseScreen {
     private static final float OBJECT_SPEED = 5f;
-    private Texture img,img2;
-    private Vector2 pos,click,lastMove;
+    private Texture imgBackground, imgLogo;
+    private Vector2 pos,click;
 
     @Override
     public void show() {
         super.show();
         pos = new Vector2();
-        lastMove = new Vector2();
         click = new Vector2();
-        img = new Texture("galaxy.jpg");
-        img2 = new Texture("badlogic.jpg");
+        imgBackground = new Texture("galaxy.jpg");
+        imgLogo = new Texture("badlogic.jpg");
     }
 
     @Override
@@ -27,15 +26,15 @@ public class MenuScreen extends BaseScreen {
         Gdx.gl.glClearColor(0,0,0,1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.begin();
-        batch.draw(img, 0, 0);
-        batch.draw(img2,pos.x,pos.y,100,100);
+        batch.draw(imgBackground, 0, 0);
+        batch.draw(imgLogo,pos.x,pos.y,100,100);
         batch.end();
         moveLogo();
     }
     @Override
     public void dispose() {
-        img.dispose();
-        img2.dispose();
+        imgBackground.dispose();
+        imgLogo.dispose();
         super.dispose();
     }
 
@@ -43,16 +42,15 @@ public class MenuScreen extends BaseScreen {
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         click.set(screenX,Gdx.graphics.getHeight()-screenY);
         System.out.println(screenX+"  "+(Gdx.graphics.getHeight()-screenY));
-        lastMove.set(0,0);
         return false;
     }
     private void moveLogo(){
         if (!pos.equals(click)){
             Vector2 clickCopy = new Vector2(click);
             Vector2 move = clickCopy.sub(pos);
+            Vector2 distance = new Vector2(move);
             move=move.setLength(OBJECT_SPEED);
-            checkPosition(move);
-            lastMove.set(move);
+            checkDistanceAndMove(move,distance);
         }
     }
 
@@ -71,12 +69,10 @@ public class MenuScreen extends BaseScreen {
         }
         return false;
     }
-    private void checkPosition(Vector2 move){
-        if((lastMove.x/move.x>0||lastMove.y/move.y>0)||(lastMove.x==0&lastMove.y==0)){
-            pos.add(move.x,move.y);
-        }
-        else{
+    private void checkDistanceAndMove(Vector2 move,Vector2 distance){
+        if(distance.len()>move.len())
+            pos.add(move);
+        else
             pos.set(click);
-        }
     }
 }
