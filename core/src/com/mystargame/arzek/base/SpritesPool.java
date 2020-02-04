@@ -1,6 +1,7 @@
 package com.mystargame.arzek.base;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.mystargame.arzek.math.Rect;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +44,10 @@ public abstract class SpritesPool<T extends Sprite> {
                 item.flushDestroy();
             }
         }
+    }
+    public void freeAllActiveObjects(){
+        freeObjects.addAll(activeObjects);
+        activeObjects.clear();
     }
     private void free(T object){
         if (activeObjects.remove(object))
