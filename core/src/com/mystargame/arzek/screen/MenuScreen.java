@@ -1,78 +1,104 @@
 package com.mystargame.arzek.screen;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.mystargame.arzek.base.BaseScreen;
+import com.mystargame.arzek.math.Rect;
+import com.mystargame.arzek.sprites.Background;
+import com.mystargame.arzek.sprites.ButtonExit;
+import com.mystargame.arzek.sprites.ButtonPlay;
+import com.mystargame.arzek.sprites.Star;
 
 public class MenuScreen extends BaseScreen {
-    private static final float OBJECT_SPEED = 5f;
-    private Texture imgBackground, imgLogo;
-    private Vector2 pos,click;
+    private Game game;
+    private Texture imgBackground;
+    private Background background;
+    private TextureAtlas atlas;
+    private ButtonExit buttonExit;
+    private ButtonPlay buttonPlay;
+    private Star[] stars;
+
+    public MenuScreen(Game game) {
+        this.game = game;
+    }
 
     @Override
     public void show() {
         super.show();
-        pos = new Vector2();
-        click = new Vector2();
-        imgBackground = new Texture("galaxy.jpg");
-        imgLogo = new Texture("badlogic.jpg");
+        imgBackground = new Texture("textures/galaxy.jpg");
+        background=new Background(new TextureRegion(imgBackground));
+        atlas = new TextureAtlas(Gdx.files.internal("textures/menuAtlas.tpack"));
+        buttonExit = new ButtonExit(atlas);
+        buttonPlay = new ButtonPlay(atlas,game);
+        stars=new Star[256];
+        for (int i =0;i<stars.length;i++){
+            stars[i] = new Star(atlas);
+        }
     }
 
     @Override
     public void render(float delta) {
         super.render(delta);
-        Gdx.gl.glClearColor(0,0,0,1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        batch.begin();
-        batch.draw(imgBackground, 0, 0);
-        batch.draw(imgLogo,pos.x,pos.y,100,100);
-        batch.end();
-        moveLogo();
+        update(delta);
+        draw();
     }
     @Override
     public void dispose() {
         imgBackground.dispose();
-        imgLogo.dispose();
+        atlas.dispose();
         super.dispose();
     }
 
     @Override
-    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        click.set(screenX,Gdx.graphics.getHeight()-screenY);
-        System.out.println(screenX+"  "+(Gdx.graphics.getHeight()-screenY));
-        return false;
+    public boolean keyTyped(Vector2 touch, char character) {
+        return super.keyTyped(touch, character);
     }
-    private void moveLogo(){
-        if (!pos.equals(click)){
-            Vector2 clickCopy = new Vector2(click);
-            Vector2 move = clickCopy.sub(pos);
-            Vector2 distance = new Vector2(move);
-            move=move.setLength(OBJECT_SPEED);
-            checkDistanceAndMove(move,distance);
+
+    @Override
+    public void resize(Rect worldBounds) {
+        super.resize(worldBounds);
+        background.resize(worldBounds);
+        buttonExit.resize(worldBounds);
+        buttonPlay.resize(worldBounds);
+        for (Star star:stars){
+            star.resize(worldBounds);
         }
     }
 
     @Override
-    public boolean keyTyped(char character) {
-        if (character=='w'||character=='ц'){
-            click.add(0,10);}
-        else if(character=='s'||character=='ы'){
-            click.add(0,-10);
-            }
-        else if(character=='a'||character=='ф'){
-            click.add(-10,0);
-        }
-        else if(character=='d'||character=='в'){
-            click.add(10,0);
-        }
+    public boolean touchDown(Vector2 touch, int pointer, int button) {
+        buttonExit.touchDown(touch,pointer,button);
+        buttonPlay.touchDown(touch,pointer,button);
         return false;
     }
-    private void checkDistanceAndMove(Vector2 move,Vector2 distance){
-        if(distance.len()>move.len())
-            pos.add(move);
-        else
-            pos.set(click);
+
+    @Override
+    public boolean touchUp(Vector2 touch, int pointer, int button) {
+        buttonExit.touchUp(touch,pointer,button);
+        buttonPlay.touchUp(touch,pointer,button);
+        return false;
+    }
+
+    private void update(float delta){
+        for (Star star:stars){
+            star.update(delta);
+        }
+    }
+    private void draw(){
+        Gdx.gl.glClearColor(0,0,0,1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        batch.begin();
+        background.draw(batch);
+        for (Star star:stars){
+            star.draw(batch);
+        }
+        buttonExit.draw(batch);
+        buttonPlay.draw(batch);
+        batch.end();
     }
 }
